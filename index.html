@@ -214,37 +214,47 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
 const navLinks = document.querySelectorAll('.w3-sidebar a, #myNavbar a');
 const sections = document.querySelectorAll('.main-section');
 
-sections[0].classList.add('active');
+// Function to activate section
+function activateSection(id) {
+  sections.forEach(section => section.classList.remove('active'));
 
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  target.classList.add('active');
+
+  // Reset scroll to top
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  // Animate progress bars if About
+  if (id === 'about') {
+    const bars = target.querySelectorAll('.w3-progress');
+    bars.forEach(bar => {
+      const width = bar.getAttribute('data-progress');
+      bar.style.width = "0%"; // reset
+      setTimeout(() => {
+        bar.style.width = width;
+      }, 200);
+    });
+  }
+}
+
+// Set default section on load
+activateSection("home");
+
+// Click handling
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const targetID = link.getAttribute('href').substring(1);
 
-    sections.forEach(section => section.classList.remove('active'));
-
-    const targetSection = document.getElementById(targetID);
-    if(targetSection) sectionActive(targetSection);
+    activateSection(targetID);
 
     // Remove highlight from all links
     navLinks.forEach(l => l.classList.remove('w3-black'));
-
     link.classList.add('w3-black');
   });
 });
-
-function sectionActive(section) {
-  section.classList.add('active');
-
-  // Animate progress bars only when About section is active
-  if(section.id === 'about') {
-  const bars = section.querySelectorAll('.w3-progress');
-  bars.forEach(bar => {
-    const width = bar.getAttribute('data-progress');
-    setTimeout(() => { bar.style.width = width; }, 200);
-  });
-}
-}
 </script>
 </body>
 </html>

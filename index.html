@@ -214,7 +214,6 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
 const navLinks = document.querySelectorAll('.w3-sidebar a, #myNavbar a');
 const sections = document.querySelectorAll('.main-section');
 
-// Function to activate section
 function activateSection(id) {
   sections.forEach(section => section.classList.remove('active'));
 
@@ -223,37 +222,53 @@ function activateSection(id) {
 
   target.classList.add('active');
 
-  // Reset scroll to top
+  // Scroll to top (important for mobile)
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  // Animate progress bars if About
+  // Animate progress bars only for About
   if (id === 'about') {
     const bars = target.querySelectorAll('.w3-progress');
     bars.forEach(bar => {
       const width = bar.getAttribute('data-progress');
-      bar.style.width = "0%"; // reset
+      bar.style.width = "0%";
       setTimeout(() => {
         bar.style.width = width;
       }, 200);
     });
   }
+
+  // Highlight active link
+  navLinks.forEach(l => l.classList.remove('w3-black'));
+  navLinks.forEach(link => {
+    if (link.getAttribute('href') === "#" + id) {
+      link.classList.add('w3-black');
+    }
+  });
 }
 
-// Set default section on load
-activateSection("home");
-
-// Click handling
+// Handle link clicks
 navLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const targetID = link.getAttribute('href').substring(1);
 
-    activateSection(targetID);
+    // Update URL hash
+    window.location.hash = targetID;
 
-    // Remove highlight from all links
-    navLinks.forEach(l => l.classList.remove('w3-black'));
-    link.classList.add('w3-black');
+    activateSection(targetID);
   });
+});
+
+// Handle page load (important for mobile)
+window.addEventListener("load", () => {
+  const hash = window.location.hash.replace("#", "") || "home";
+  activateSection(hash);
+});
+
+// Handle manual hash changes
+window.addEventListener("hashchange", () => {
+  const hash = window.location.hash.replace("#", "");
+  activateSection(hash);
 });
 </script>
 </body>
